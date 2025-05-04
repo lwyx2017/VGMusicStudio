@@ -6,9 +6,11 @@ using Microsoft.WindowsAPICodePack.Taskbar;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Kermalis.VGMusicStudio.UI
@@ -35,7 +37,7 @@ namespace Kermalis.VGMusicStudio.UI
 
         private readonly MenuStrip _mainMenu;
         private readonly ToolStripMenuItem _fileItem, _openDSEItem, _openAlphaDreamItem, _openMP2KItem, _openSDATItem,
-            _dataItem, _trackViewerItem, _exportDLSItem, _exportMIDIItem, _exportSF2Item, _exportWAVItem,
+            _dataItem, _trackViewerItem, _exportDLSItem, _exportMIDIItem, _exportSF2Item, _exportWAVItem, _exportAllWAVItem,
             _playlistItem, _endPlaylistItem;
         private readonly Timer _timer;
         private readonly ThemedNumeric _songNumerical;
@@ -87,8 +89,10 @@ namespace Kermalis.VGMusicStudio.UI
             _exportSF2Item.Click += ExportSF2;
             _exportWAVItem = new ToolStripMenuItem { Enabled = false, Text = Strings.MenuSaveWAV };
             _exportWAVItem.Click += ExportWAV;
+            _exportAllWAVItem = new ToolStripMenuItem { Enabled = false, Text = Strings.MenuExportAllWAV };
+            _exportAllWAVItem.Click += ExportAllWAV;
             _dataItem = new ToolStripMenuItem { Text = Strings.MenuData };
-            _dataItem.DropDownItems.AddRange(new ToolStripItem[] { _trackViewerItem, _exportDLSItem, _exportMIDIItem, _exportSF2Item, _exportWAVItem });
+            _dataItem.DropDownItems.AddRange(new ToolStripItem[] { _trackViewerItem, _exportDLSItem, _exportMIDIItem, _exportSF2Item, _exportWAVItem, _exportAllWAVItem });
 
             // Playlist Menu
             _endPlaylistItem = new ToolStripMenuItem { Enabled = false, Text = Strings.MenuEndPlaylist };
@@ -527,7 +531,7 @@ namespace Kermalis.VGMusicStudio.UI
         {
             var d = new CommonSaveFileDialog
             {
-                DefaultFileName = Engine.Instance.Config.GetSongName((long)_songNumerical.Value),
+                DefaultFileName = RemoveQuotes(Engine.Instance.Config.GetSongName((long)_songNumerical.Value)),
                 DefaultExtension = ".wav",
                 EnsureValidNames = true,
                 Title = Strings.MenuSaveWAV,
@@ -553,6 +557,99 @@ namespace Kermalis.VGMusicStudio.UI
                 Engine.Instance.Player.NumLoops = oldLoops;
                 _stopUI = false;
             }
+        }
+
+        private string RemoveQuotes(string fileName)
+        {
+            string invalidChars = Regex.Escape(new string(Path.GetInvalidFileNameChars()));
+            string invalidRegStr = string.Format(@"[{0}]", invalidChars);
+            return Regex.Replace(fileName, invalidRegStr, "");
+        }
+
+        private void ExportAllWAV(object sender, EventArgs e)
+        {
+            var folderDialog = new CommonOpenFileDialog
+            {
+                IsFolderPicker = true,
+                Title = "Select the save directory"
+            };
+            if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                string saveDir = folderDialog.FileName;
+                if (Directory.Exists(saveDir) && Directory.EnumerateFileSystemEntries(saveDir).Any())
+                {
+                    DialogResult result = FlexibleMessageBox.Show(
+                        "The selected directory is not empty,Do you want to continue?",
+                        "Directory Not Empty",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning);
+
+                    if (result != DialogResult.Yes)
+                    {
+                        return;
+                    }
+                }
+                int successCount = 0;
+                int failCount = 0;
+                long originalSong = (long)_songNumerical.Value;
+                var originalState = Engine.Instance.Player.State;
+                bool originalFade = Engine.Instance.Player.ShouldFadeOut;
+                long originalLoops = Engine.Instance.Player.NumLoops;
+                Stop();
+
+                for (long i = 0; i <= _songNumerical.Maximum; i++)
+                {
+                    try
+                    {
+                        Engine.Instance.Player.LoadSong(i);
+                        int numTracks = Engine.Instance.Player.Events?.Length ?? 0;
+                        if (numTracks == 0)
+                        {
+                            failCount++;
+                            continue;
+                        }
+
+                        string songName = RemoveQuotes(Engine.Instance.Config.GetSongName(i));
+                        string fileName = Path.Combine(saveDir, $"{i}_{songName}.wav");
+                        fileName = GetUniqueFilePath(fileName);
+                        Engine.Instance.Player.ShouldFadeOut = true;
+                        Engine.Instance.Player.NumLoops = GlobalConfig.Instance.PlaylistSongLoops;
+                        Engine.Instance.Player.Record(fileName);
+                        successCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        failCount++;
+                        Debug.WriteLine($"Export failed: {ex.Message}");
+                    }
+                    finally
+                    {
+                        Engine.Instance.Player.ShouldFadeOut = originalFade;
+                        Engine.Instance.Player.NumLoops = originalLoops;
+                    }
+                }
+
+                SetAndLoadSong(originalSong);
+                if (originalState == PlayerState.Playing)
+                    Play();
+
+                FlexibleMessageBox.Show($"Successfully exported {successCount} songs, failed to export {failCount} songs", "Prompt");
+            }
+        }
+
+        private string GetUniqueFilePath(string desiredPath)
+        {
+            string directory = Path.GetDirectoryName(desiredPath);
+            string fileName = Path.GetFileNameWithoutExtension(desiredPath);
+            string extension = Path.GetExtension(desiredPath);
+            int counter = 1;
+
+            while (File.Exists(desiredPath))
+            {
+                desiredPath = Path.Combine(directory, $"{fileName} ({counter++}){extension}");
+            }
+
+            return desiredPath;
         }
 
         public void LetUIKnowPlayerIsPlaying()
@@ -649,6 +746,7 @@ namespace Kermalis.VGMusicStudio.UI
                 _songsComboBox.Items.AddRange(playlist.Songs.Select(s => new ImageComboBoxItem(s, Resources.IconSong, 1)).ToArray());
             }
             _songNumerical.Maximum = numSongs - 1;
+            _exportAllWAVItem.Enabled = numSongs > 0;
 #if DEBUG
             //VGMSDebug.EventScan(Engine.Instance.Config.Playlists[0].Songs, numericalVisible);
 #endif
@@ -664,6 +762,7 @@ namespace Kermalis.VGMusicStudio.UI
                 Stop();
                 Engine.Instance.Dispose();
             }
+            _exportAllWAVItem.Enabled = false;
             _trackViewer?.UpdateTracks();
             _prevTButton.Enabled = _toggleTButton.Enabled = _nextTButton.Enabled = _songsComboBox.Enabled = _songNumerical.Enabled = _playButton.Enabled = _volumeBar.Enabled = _positionBar.Enabled = false;
             Text = Utils.ProgramName;

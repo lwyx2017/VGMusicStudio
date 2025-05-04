@@ -345,4 +345,7 @@
   <data name="SuccessSaveDLS" xml:space="preserve">
     <value>VoiceTable salvata in {0}.</value>
   </data>
+  <data name="MenuExportAllWAV" xml:space="preserve">
+    <value />
+  </data>
 </root>

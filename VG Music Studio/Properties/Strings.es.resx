@@ -117,23 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EndPlaylistBody" xml:space="preserve">
-    <value>Quisiera detener la Lista de Reproducción actual?</value>
-  </data>
   <data name="ErrorLoadSong" xml:space="preserve">
     <value>Error al Cargar Canción {0}</value>
   </data>
-  <data name="ErrorOpenDSE" xml:space="preserve">
-    <value>Error al Abrir Carpeta DSE</value>
-  </data>
   <data name="ErrorOpenAlphaDream" xml:space="preserve">
     <value>Error al Abrir GBA ROM (AlphaDream)</value>
-  </data>
-  <data name="ErrorOpenMP2K" xml:space="preserve">
-    <value>Error al Abrir GBA ROM (MP2K)</value>
-  </data>
-  <data name="ErrorOpenSDAT" xml:space="preserve">
-    <value>Error al Abrir Archivo SDAT</value>
   </data>
   <data name="ErrorSaveMIDI" xml:space="preserve">
     <value>Error al Exportar MIDI</value>
@@ -141,35 +129,17 @@
   <data name="FilterOpenGBA" xml:space="preserve">
     <value>Archivo GBA</value>
   </data>
-  <data name="FilterOpenSDAT" xml:space="preserve">
-    <value>Archivo SDAT</value>
-  </data>
   <data name="FilterSaveMIDI" xml:space="preserve">
     <value>Archivos MIDI</value>
   </data>
   <data name="MenuData" xml:space="preserve">
     <value>Datos</value>
   </data>
-  <data name="MenuEndPlaylist" xml:space="preserve">
-    <value>Detener Lista de Reproducción Actual</value>
-  </data>
   <data name="MenuFile" xml:space="preserve">
     <value>Archivo</value>
   </data>
-  <data name="MenuOpenDSE" xml:space="preserve">
-    <value>Abrir Carpeta DSE</value>
-  </data>
-  <data name="MenuOpenAlphaDream" xml:space="preserve">
-    <value>Abrir GBA ROM (AlphaDream)</value>
-  </data>
   <data name="MenuOpenMP2K" xml:space="preserve">
     <value>Abrir GBA ROM (MP2K)</value>
-  </data>
-  <data name="MenuOpenSDAT" xml:space="preserve">
-    <value>Abrir Archivo SDAT</value>
-  </data>
-  <data name="MenuPlaylist" xml:space="preserve">
-    <value>Playlist</value>
   </data>
   <data name="MenuSaveMIDI" xml:space="preserve">
     <value>Exportar Canción como MIDI</value>
@@ -177,8 +147,8 @@
   <data name="Notes" xml:space="preserve">
     <value>Do;Do#;Re;Re#;Mi;Fa;Fa#;Sol;Sol#;La;La#;Si</value>
   </data>
-  <data name="PlayerNextSong" xml:space="preserve">
-    <value>Siguiente Canción</value>
+  <data name="PlayerRest" xml:space="preserve">
+    <value>Retraso</value>
   </data>
   <data name="PlayerNotes" xml:space="preserve">
     <value>Notas</value>
@@ -192,12 +162,6 @@
   <data name="PlayerPosition" xml:space="preserve">
     <value>Posición</value>
   </data>
-  <data name="PlayerPreviousSong" xml:space="preserve">
-    <value>Canción Anterior</value>
-  </data>
-  <data name="PlayerRest" xml:space="preserve">
-    <value>Retraso</value>
-  </data>
   <data name="PlayerStop" xml:space="preserve">
     <value>Detener</value>
   </data>
@@ -210,14 +174,50 @@
   <data name="PlayerUnpause" xml:space="preserve">
     <value>Resumir</value>
   </data>
-  <data name="PlaylistMusic" xml:space="preserve">
-    <value>Música</value>
+  <data name="SuccessSaveMIDI" xml:space="preserve">
+    <value>MIDI guardado en {0}.</value>
   </data>
   <data name="PlayPlaylistBody" xml:space="preserve">
     <value>Quisiera reproducir la siguiente Lista de Reproducción? {0}</value>
   </data>
-  <data name="SuccessSaveMIDI" xml:space="preserve">
-    <value>MIDI guardado en {0}.</value>
+  <data name="PlayerNextSong" xml:space="preserve">
+    <value>Siguiente Canción</value>
+  </data>
+  <data name="PlayerPreviousSong" xml:space="preserve">
+    <value>Canción Anterior</value>
+  </data>
+  <data name="EndPlaylistBody" xml:space="preserve">
+    <value>Quisiera detener la Lista de Reproducción actual?</value>
+  </data>
+  <data name="ErrorOpenDSE" xml:space="preserve">
+    <value>Error al Abrir Carpeta DSE</value>
+  </data>
+  <data name="ErrorOpenMP2K" xml:space="preserve">
+    <value>Error al Abrir GBA ROM (MP2K)</value>
+  </data>
+  <data name="ErrorOpenSDAT" xml:space="preserve">
+    <value>Error al Abrir Archivo SDAT</value>
+  </data>
+  <data name="FilterOpenSDAT" xml:space="preserve">
+    <value>Archivo SDAT</value>
+  </data>
+  <data name="MenuEndPlaylist" xml:space="preserve">
+    <value>Detener Lista de Reproducción Actual</value>
+  </data>
+  <data name="MenuOpenDSE" xml:space="preserve">
+    <value>Abrir Carpeta DSE</value>
+  </data>
+  <data name="MenuOpenAlphaDream" xml:space="preserve">
+    <value>Abrir GBA ROM (AlphaDream)</value>
+  </data>
+  <data name="MenuOpenSDAT" xml:space="preserve">
+    <value>Abrir Archivo SDAT</value>
+  </data>
+  <data name="MenuPlaylist" xml:space="preserve">
+    <value>Playlist</value>
+  </data>
+  <data name="PlaylistMusic" xml:space="preserve">
+    <value>Música</value>
   </data>
   <data name="TrackViewerArguments" xml:space="preserve">
     <value>Argumento</value>
@@ -344,5 +344,8 @@
   </data>
   <data name="SuccessSaveDLS" xml:space="preserve">
     <value>DLS guardado en {0}.</value>
+  </data>
+  <data name="MenuExportAllWAV" xml:space="preserve">
+    <value />
   </data>
 </root>

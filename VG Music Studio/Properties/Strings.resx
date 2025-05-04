@@ -373,4 +373,7 @@
     <value>VoiceTable saved to {0}.</value>
     <comment>{0} is the file name.</comment>
   </data>
+  <data name="MenuExportAllWAV" xml:space="preserve">
+    <value>Export All WAV</value>
+  </data>
 </root>
